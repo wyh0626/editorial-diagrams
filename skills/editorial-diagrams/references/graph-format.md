@@ -1,5 +1,7 @@
 # Graph configuration
 
+Prefer a matching case from [pattern-catalog.md](pattern-catalog.md). This convenience interface handles explicitly positioned component-and-connection adaptations. Other case adaptations can use [scene-format.md](scene-format.md). The visual identity in [visual-language.md](visual-language.md) applies throughout.
+
 The renderer uses explicit coordinates in CSS pixels. The agent plans the layout; the renderer validates geometry and produces HTML, CSS and SVG. It does not run an automatic graph-layout engine or translate text.
 
 ## Top-level fields
@@ -12,6 +14,8 @@ The renderer uses explicit coordinates in CSS pixels. The agent plans the layout
 | `ui` | Complete localized UI object described below |
 | `kicker`, `title`, `intro` | Figure label, heading and explanation |
 | `width`, `height` | Fixed board dimensions; the header is outside the board |
+| `animated` | Optional boolean; use `false` for static output without playback controls |
+| `duration` | Optional positive shared-clock cycle duration; defaults to 8 seconds |
 | `legend` | Array of `{kind, label}`; kind is `request`, `response` or `change` |
 | `groups` | Optional array of `{id, title, x, y, w, h}` |
 | `nodes` | Nodes with explicit rectangles |
@@ -73,7 +77,7 @@ When a script generates request and response pairs, give each edge its own copy 
 python3 scripts/render.py --data examples/05-http3.json --output /path/to/task/http3.html
 ```
 
-`--instance graph-one` sets an explicit root ID, which must start with a lowercase letter and use lowercase letters, digits or hyphens. Give each fragment a different instance ID when embedding several diagrams on one page. A host page must allow inline CSS and JavaScript.
+`--instance graph-one` sets an explicit root ID, which must start with a lowercase letter and use lowercase letters, digits or hyphens. Give each fragment a different instance ID when embedding several diagrams on one page. A host page must allow inline CSS and JavaScript. The graph's per-edge SVG timing is preserved; authored scenes can instead derive coherent state from the shared `ed:frame` clock.
 
 Check labels after localization. Do not clip long translations or force them into small cards by reducing all text sizes. Adjust the layout and path endpoints together when resizing nodes.
 

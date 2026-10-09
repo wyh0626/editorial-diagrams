@@ -1,0 +1,110 @@
+{
+  "locale": "en",
+  "intro": "Clients share platform capabilities while storage and change consumers remain separate.",
+  "sources": [
+    {
+      "title": "Reference article and source figures",
+      "url": "https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/"
+    }
+  ],
+  "pattern": "architecture",
+  "kicker": "Figure 01 / Platform architecture",
+  "title": "A storage platform centralizes shared responsibilities",
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Request"
+    },
+    {
+      "kind": "response",
+      "label": "Response"
+    },
+    {
+      "kind": "change",
+      "label": "Change capture"
+    }
+  ],
+  "content": {
+    "labels": {
+      "clients": "Clients",
+      "platform": "Storage platform",
+      "resources": "Storage resources",
+      "changeService": "Change capture"
+    },
+    "clients": [
+      "ChatGPT",
+      "API",
+      "Codex",
+      "Internal services",
+      "Other products"
+    ],
+    "platform": "Habitat",
+    "features": [
+      {
+        "title": "Cache",
+        "subtitle": "Cache handling"
+      },
+      {
+        "title": "Access policy",
+        "subtitle": "Authorization"
+      },
+      {
+        "title": "Placement",
+        "subtitle": "Data residency"
+      },
+      {
+        "title": "Encryption",
+        "subtitle": "Data security"
+      },
+      {
+        "title": "Isolation",
+        "subtitle": "Multi-tenancy"
+      },
+      {
+        "title": "Rate limits",
+        "subtitle": "Traffic shaping"
+      }
+    ],
+    "routing": {
+      "title": "Routing",
+      "subtitle": "Schema lookup / placement"
+    },
+    "resources": [
+      {
+        "title": "Azure Cosmos DB",
+        "subtitle": "Online storage"
+      },
+      {
+        "title": "Nanobase",
+        "subtitle": "Online storage"
+      },
+      {
+        "title": "Valkey",
+        "subtitle": "Cache"
+      },
+      {
+        "title": "Blob storage",
+        "subtitle": "Objects"
+      }
+    ],
+    "changeService": "Change capture",
+    "consumers": [
+      "Databricks",
+      "Rockset",
+      "Kafka",
+      "Other consumers"
+    ]
+  },
+  "notes": [
+    "Original implementation with system fonts; article-inspired composition, not an exact website copy. Timings and counts illustrate this model, not production measurements."
+  ],
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the figure",
+    "replay": "Replay"
+  }
+}

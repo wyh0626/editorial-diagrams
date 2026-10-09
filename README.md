@@ -2,20 +2,30 @@
 
 English | [简体中文](README.zh-CN.md)
 
-An agent skill that turns a plain-language request into a precise, editable, animated technical diagram — the kind of figure you would find inside a well-edited engineering article.
+An agent skill that selects and adapts engineering-blog diagram cases from a plain-language request. Six figures from [OpenAI's storage engineering article](https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/) form five reusable composition families. The agent chooses the case for the explanation, then adapts its participants, labels and model.
 
-**Live example:** [Codex CLI architecture (Chinese)](https://codex-architecture-site.vercel.app/), drawn by the skill from the `openai/codex` source tree.
+## Case library
 
-[![Codex CLI architecture drawn with Editorial Diagrams](docs/images/06-codex-cli-zh-CN.png)](https://codex-architecture-site.vercel.app/)
+| What the reader needs to understand | Selected composition | Article figure |
+| --- | --- | --- |
+| Components, responsibilities and dependencies | Platform architecture | 01 |
+| The route of one operation through components | Branched request flow | 02 |
+| Time spent working, waiting and blocked | Paired timelines on one scale | 03 |
+| Return order, resource selection and resulting load | Connection-pool reuse, LIFO / FIFO | 04A / 04B |
+| Fewer connections for the same upstream workload | Three stacked aggregation scenarios | 05 |
 
-## What "editorial" means here
+The user describes the idea; the agent chooses the case. For example, explaining where a request travels selects Figure 02, explaining why a ready response waits selects Figure 03, and explaining multiplexing's connection savings selects Figure 05. A request that mentions “connections” does not automatically become a flowchart.
 
-"Editorial" refers to the figures that accompany articles in engineering blogs and publications: a figure label, a heading, a one-paragraph explanation, a legend and source notes, all framing a calm black-on-white diagram. The skill produces that kind of figure rather than a whiteboard sketch or an auto-laid-out graph:
+| | |
+| --- | --- |
+| [![Platform architecture](docs/images/blog-01-architecture.jpg)](skills/editorial-diagrams/examples/blog/01-architecture.json) | [![Request flow](docs/images/blog-02-request-flow.jpg)](skills/editorial-diagrams/examples/blog/02-request-flow.json) |
+| Figure 01 · Platform architecture | Figure 02 · Request flow |
+| [![Paired timelines](docs/images/blog-03-timeline.jpg)](skills/editorial-diagrams/examples/blog/03-timeline.json) | [![Connection aggregation](docs/images/blog-05-aggregation.jpg)](skills/editorial-diagrams/examples/blog/05-aggregation.json) |
+| Figure 03 · Thread scheduling and readiness | Figure 05 · Local pools, shared pool, multiplexing |
+| [![LIFO pool reuse](docs/images/blog-04a-pool-lifo.jpg)](skills/editorial-diagrams/examples/blog/04a-pool-lifo.json) | [![FIFO pool reuse](docs/images/blog-04b-pool-fifo.jpg)](skills/editorial-diagrams/examples/blog/04b-pool-fifo.json) |
+| Figure 04A · Most recently returned first | Figure 04B · Earliest returned first |
 
-- white surface with a subtle dot grid, 1px dark borders and 4px card corners;
-- aligned cards and groups, orthogonal connectors with arrowheads;
-- small animated markers that show direction — squares for requests, circles for responses, diamonds for asynchronous changes;
-- a labeled play/pause control, a legend and notes for assumptions and sources.
+These previews use original implementations and system fonts. They follow the article's compositions and illustrative behavior; they are not pixel-identical copies of the website.
 
 ## Install
 
@@ -25,93 +35,59 @@ With [skills.sh](https://skills.sh):
 npx skills add wyh0626/editorial-diagrams
 ```
 
-Install globally for a specific agent:
+Or install globally for a specific agent:
 
 ```bash
 npx skills add wyh0626/editorial-diagrams -g -a claude-code
-```
-
-```bash
 npx skills add wyh0626/editorial-diagrams -g -a codex
 ```
 
-Manual install: copy [`skills/editorial-diagrams`](skills/editorial-diagrams) into your agent's skills directory, for example `~/.claude/skills/editorial-diagrams`.
+Manual install: copy [`skills/editorial-diagrams`](skills/editorial-diagrams) into your agent's skills directory, such as `~/.claude/skills/editorial-diagrams` or `~/.codex/skills/editorial-diagrams`.
 
 ## Use
 
-Ask your agent in any language:
-
 ```text
-/editorial-diagrams Draw the architecture of this repository
+Use editorial-diagrams to explain why ready responses wait when an event-loop thread spends too long processing CPU work.
 ```
 
 ```text
-Use editorial-diagrams to show how a request flows through our API gateway
+Use editorial-diagrams to compare independent connection pools, a shared proxy pool and multiplexing under the same workload.
 ```
 
-The agent reads the code or the description, plans the layout, writes a JSON configuration, renders it and checks the result in a browser. You get:
+The agent selects the closest case, copies its editable JSON, adjusts the content and parameters, renders it and inspects it in a browser. It should preserve the selected case's defining structure. Custom scene authoring remains available when the parameters cannot express a necessary adaptation.
 
-| File | Purpose |
-| --- | --- |
-| `diagram.json` | Editable source: nodes, groups, edges, text |
-| `diagram.html` | Self-contained interactive page (inline CSS and JS, no network requests) |
-| `diagram.png` | Optional preview, when the host can take browser screenshots |
+Generated headings, legends, buttons, internal labels and accessible names follow the requested language or the conversation language. The skill and authoring references are in English.
 
-The generated page follows the conversation's language, including button captions and accessibility labels.
+Deliverables are an editable `diagram.json`, self-contained `diagram.html`, and an optional browser preview. The page requires no external fonts, libraries or network requests. Additional scene files are only needed for custom adaptations.
 
-## Render manually
+## Render a case
 
-The renderer needs Python 3.8+ and nothing else.
+Python 3.8+ is the only requirement:
 
 ```bash
-python3 skills/editorial-diagrams/scripts/render.py --data skills/editorial-diagrams/examples/01-api-gateway.json --output out/api-gateway.html
+python3 skills/editorial-diagrams/scripts/render.py --data skills/editorial-diagrams/examples/blog/05-aggregation.json --output out/aggregation.html
 ```
 
-- `--instance <id>` sets a stable root element ID.
-- `--fragment` writes an embeddable fragment instead of a full page.
+Set `pattern`, `content` and applicable `model` parameters in the JSON. The renderer computes geometry. Pool policies share identical arrivals and server work; timelines share one scale; aggregation panels share the same upstream workload.
 
-The renderer validates geometry before writing: board bounds, duplicate IDs, overlapping nodes, orthogonal segments, endpoints attached to node borders and connectors that pass through unrelated nodes. It cannot measure text, so check the page in a browser:
+- `--instance <id>` sets a stable root ID; `--fragment` emits an embeddable fragment.
+- `animated: false` renders a static figure. Dynamic cases support pause/resume, reduced motion and visibility handling. Timelines and pool reuse add seeking; aggregation opens at a steady state and can replay from zero.
+- `?time=...&check=1` freezes a repeatable state and reports label overflow. Playback seconds and model time are documented per case.
+- Request flow has a vertical phone layout. Pool reuse compacts its columns. Architecture, timelines and aggregation preserve geometry with horizontal scrolling.
 
-| Query | Effect |
-| --- | --- |
-| `?time=2.4` | Freeze the animation at 2.4 s for repeatable screenshots |
-| `?scroll=500` | Scroll the board horizontally |
-| `?check=1` | Outline card labels that overflow, and report the count in `data-overflow` |
+Read the [case catalog and parameters](skills/editorial-diagrams/references/pattern-catalog.md), [visual language](skills/editorial-diagrams/references/visual-language.md), [custom scene interface](skills/editorial-diagrams/references/scene-format.md) and [graph interface](skills/editorial-diagrams/references/graph-format.md).
 
-The configuration format is documented in [`references/graph-format.md`](skills/editorial-diagrams/references/graph-format.md).
+## Development
 
-## Examples
-
-| | |
-| --- | --- |
-| [![API gateway](docs/images/01-api-gateway.png)](skills/editorial-diagrams/examples/01-api-gateway.json) | [![Order events](docs/images/02-order-events.png)](skills/editorial-diagrams/examples/02-order-events.json) |
-| API gateway and business services | Commit the transaction, then publish events |
-| [![RAG](docs/images/03-rag.png)](skills/editorial-diagrams/examples/03-rag.json) | [![Regional replication](docs/images/04-regional-replication.png)](skills/editorial-diagrams/examples/04-regional-replication.json) |
-| Separate query and ingestion paths | Primary writes, local read-only queries |
-| [![HTTP/3](docs/images/05-http3.png)](skills/editorial-diagrams/examples/05-http3.json) | [![Codex CLI](docs/images/06-codex-cli-zh-CN.png)](skills/editorial-diagrams/examples/06-codex-cli-zh-CN.json) |
-| HTTP/3 streams over one QUIC connection | Codex CLI architecture (Simplified Chinese) |
-
-The examples are starting points for topology, not templates to fill in.
-
-## Repository layout
-
-```text
-skills/editorial-diagrams/
-├── SKILL.md                  # Instructions the agent follows
-├── agents/openai.yaml        # Display metadata for Codex
-├── assets/                   # CSS, icon geometry, playback script
-├── examples/                 # Example JSON configurations
-├── references/graph-format.md
-└── scripts/render.py         # Standard-library renderer and validator
-docs/images/                  # README previews
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py' -v
+node --test tests/playback.test.cjs
 ```
 
-## Notes
+Tests cover rendering and localization contracts, scheduling, pool conservation and allocation, responsive geometry, and the shared playback clock. Browser checks remain necessary for appearance, text fit and interaction. Timings and counts are illustrative, not measured performance guarantees.
 
-- Animation shows direction only. It does not represent latency, throughput or packet counts.
-- The skill uses system fonts and simple original geometric icons. It contains no extracted website code, proprietary fonts or brand assets.
-- This is an independent community project. It is not affiliated with or endorsed by OpenAI or any publication whose figures inspired the visual style. The Codex example describes the public `openai/codex` repository.
+The earlier graph examples remain under `examples/`. An additional community example is the [Codex CLI architecture](https://codex-architecture-site.vercel.app/) drawn from the public `openai/codex` source tree.
 
-## License
+## License and provenance
 
-[MIT](LICENSE)
+[MIT](LICENSE). This is an independent community project, unaffiliated with and not endorsed by OpenAI. The case library is studied from the linked article and implemented in original SVG/HTML/CSS/JavaScript. It contains no extracted website code, proprietary fonts or brand assets.

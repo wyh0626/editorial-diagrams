@@ -1,0 +1,77 @@
+{
+  "locale": "en",
+  "intro": "The same three requests and I/O waits share one thread; only the CPU work changes.",
+  "sources": [
+    {
+      "title": "Reference article and source figures",
+      "url": "https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/"
+    }
+  ],
+  "pattern": "timeline-comparison",
+  "kicker": "Figure 03 / Event-loop scheduling",
+  "title": "Long CPU steps keep ready responses waiting",
+  "legend": [
+    {
+      "shape": "circle",
+      "color": "#90a9e5",
+      "label": "CPU processing"
+    },
+    {
+      "shape": "circle",
+      "color": "#4b6bab",
+      "label": "Network read / write"
+    },
+    {
+      "shape": "circle",
+      "color": "#c4d2ed",
+      "label": "I/O wait"
+    }
+  ],
+  "model": {
+    "cpu": [
+      1,
+      6
+    ],
+    "requests": 3,
+    "wait": 6,
+    "network": 0.4,
+    "scale": 40
+  },
+  "content": {
+    "scenarios": [
+      {
+        "title": "Short CPU steps",
+        "subtitle": "I/O waits overlap while the thread is idle"
+      },
+      {
+        "title": "Long CPU steps",
+        "subtitle": "Ready responses wait for the occupied thread"
+      }
+    ],
+    "labels": {
+      "thread": "Python thread",
+      "timeAxis": "Time →",
+      "request": "Request {id}",
+      "cpu": "CPU",
+      "network": "Network",
+      "wait": "I/O wait",
+      "blocked": "Ready / blocked",
+      "finished": "All requests finish at {time} units.",
+      "seek": "Illustrative time",
+      "complete": "All requests complete",
+      "idle": "Idle"
+    }
+  },
+  "notes": [
+    "Original implementation with system fonts; article-inspired composition, not an exact website copy. Timings and counts illustrate this model, not production measurements."
+  ],
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the figure",
+    "replay": "Replay"
+  }
+}

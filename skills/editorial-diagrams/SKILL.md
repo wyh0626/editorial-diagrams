@@ -1,59 +1,72 @@
 ---
 name: editorial-diagrams
-description: Create polished interactive architecture and protocol diagrams with aligned cards, orthogonal connectors and animated flow markers. Use for system architecture, request flows, protocol transport, event pipelines and engineering illustrations. Adapt diagram text and UI labels to the user's language.
+description: Draw technical illustrations by selecting and adapting the five composition families demonstrated in OpenAI's storage engineering article: architecture, request flow, paired timelines, connection-pool reuse and connection aggregation. Match the article's visual grammar and behavior, choose the case for the user's scenario, and localize all generated text and controls.
 ---
 
 # Editorial Diagrams
 
-Turn a natural-language request into a precise, editable technical diagram. Own the content model, layout, JSON configuration, rendering and visual review. Do not ask the user to write JSON or calculate coordinates.
+Select a proven engineering-article composition, then adapt its labels, participants and model to explain the user's idea. The default is the article case library, not unrestricted visual invention. The user describes the subject; the agent selects the suitable case.
 
-This is an independent community skill inspired by the editorial appearance of public engineering articles. Its bundled implementation uses original code, simple geometric icons and system fonts. It includes no extracted website templates, proprietary font files or brand assets, and makes no pixel-identity claim.
+The reference is [Scaling storage to one billion users](https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/). Its six figures provide five composition families, with LIFO and FIFO variants of the same connection-pool composition. The bundled implementations are original code using system fonts, not extracted website components or proprietary fonts. They preserve the case structure and illustrative behavior without claiming pixel identity.
 
-## Language and locale
+## Select a case before drawing
 
-The skill instructions and bundled examples are in English. Generated diagrams must follow the user's language rather than inheriting the example's language.
+Read [references/pattern-catalog.md](references/pattern-catalog.md). Choose the case by the relationship the reader needs to understand, not by isolated keywords or by always preferring a flowchart.
 
-1. Use an explicitly requested output language first.
-2. Otherwise use the user's current conversation language and any stated locale preference. Use a known application or browser locale only when the conversation gives no clear language signal. Do not infer language from usernames, directory names or geographic location.
-3. Fall back to English when no language context is available. Resolve ordinary language choices without asking for confirmation.
-4. Set `locale` to a suitable language tag and `direction` to `ltr` or `rtl`. Translate the title, description, node and group labels, legend, edge labels, notes and source captions consistently. Preserve standard technical identifiers, protocol names and code tokens when appropriate.
-5. Supply all six `ui` strings in the chosen language: `play`, `pause`, `playAnimation`, `pauseAnimation`, `legend` and `scrollHint`. These control visible button captions, tooltips, accessible names, the legend name and the viewport hint. The renderer requires a complete UI object for non-English locales to prevent accidental English fallback.
-6. Keep play, pause, arrows and component icons as language-neutral geometry. Localize their associated captions and accessibility labels rather than replacing them with language-specific text inside SVGs. For RTL content, check text direction and legibility while keeping graph ports and arrows consistent with the configured relationships.
+| Reader's question | Pattern | Article reference |
+|---|---|---|
+| What are the components, responsibilities and dependencies? | `architecture` | Figure 01 |
+| Which components does an operation pass through? | `request-flow` | Figure 02 |
+| Where is time spent, and what becomes ready while a resource is busy? | `timeline-comparison` | Figure 03 |
+| Which returned resource is selected next, and how does that affect load? | `pool-reuse` with `policy: lifo` or `fifo` | Figures 04A / 04B |
+| How can the same workload use fewer downstream connections? | `connection-aggregation` | Figure 05 |
 
-The renderer does not translate text or detect the user's conversation language. Resolve the language as the agent before generating the configuration. See [references/graph-format.md](references/graph-format.md) for the localization contract.
+For example, a request's route through proxies calls for Figure 02; stream multiplexing that reduces connections calls for Figure 05; latency caused by scheduling calls for Figure 03. The word “connection” alone does not decide between a pool-allocation model and an aggregation comparison.
 
-## Drawing workflow
+When several questions matter, make a small sequence of suitable cases or compare variants. State the selected case and its purpose briefly, then create the figure. Do not ask the user to choose a diagram type when their intent is sufficient. If none fits exactly, adapt the closest case while retaining its visual grammar; describe substantive model changes. Use custom scene authoring only when the bundled parameters cannot represent the required content, or when the user explicitly requests another composition.
 
-1. Identify the entities, grouping boundaries and actual directed relationships. State the scenario and distinguish parallel capabilities from sequential processing. Verify unfamiliar technical claims with authoritative references when research tools are available.
-2. Read [references/graph-format.md](references/graph-format.md). Select an example with a suitable topology, or build a new graph. The examples are starting points, not a fixed menu.
-3. Plan a balanced composition. Prefer aligned rows or columns, consistent card dimensions, mirrored endpoints for symmetric systems and ample whitespace. Reserve space for group headings, node descriptions, connector labels and arrowheads. Do not force unrelated subjects into an existing layout.
-4. Write the task's JSON with the selected locale and complete localized UI labels. Position each node explicitly, then route horizontal and vertical segments from the actual source border to the destination border. Give requests and responses separate directed edges.
-5. Invoke the bundled renderer with Python 3.8 or newer. Resolve it relative to this skill directory, and save task files in the task workspace:
+## Adapt the selected case
+
+1. Open its JSON under `examples/blog/`. Copy it into the task workspace; never overwrite installed examples while drawing.
+2. Replace the title, explanation, labels and participants with the user's subject. Retain the distinguishing composition: component columns, branched request paths, paired time tracks, ordered returned-resource chips, or repeated connection scenarios.
+3. Set `pattern`, `content`, and applicable `model` parameters. The renderer computes board dimensions and placement. Keep model assumptions consistent between compared scenarios.
+4. Render with the bundled Python 3.8+ script:
 
 ```sh
-python3 /path/to/editorial-diagrams/scripts/render.py --data /path/to/task/diagram.json --output /path/to/task/diagram.html
+python3 /path/to/editorial-diagrams/scripts/render.py --data /path/to/task/figure.json --output /path/to/task/figure.html
 ```
 
-Use the actual resolved paths. Do not overwrite installed examples or skill files while drawing. The renderer uses only Python's standard library and creates a self-contained HTML file. `--instance` sets a stable unique root ID; `--fragment` produces an embeddable fragment with inline styles and script.
+Resolve the actual skill path. The renderer has no third-party dependencies and emits self-contained HTML. `--instance` sets a stable root ID; `--fragment` emits an embeddable fragment. Figures with replay controls require `ui.replay` in non-English output.
 
-6. Inspect the generated HTML in a browser when preview tools are available. Open it with `?check=1` first: the page outlines every card label that overflows its box and reports the count in `data-overflow` on the diagram root and in the console. Then check desktop and narrow views, horizontal scrolling, fonts, text overflow, group-heading clearance, edge-label placement, arrowheads and alignment. Exercise play, pause and resume, including the localized captions, tooltips and accessible names.
-7. Fix demonstrated issues in the configuration, rerender and inspect the affected view. Shorten labels, enlarge cards or revise geometry before reducing typography. Translate and recheck example labels after every locale change because text lengths differ.
-8. Deliver the interactive HTML and editable JSON. Include a preview image when browser capture is available. Report any checks that could not be completed. The renderer itself does not take screenshots; use the host's available browser tools.
+5. Inspect the rendered result, correct demonstrated problems, and deliver the HTML plus editable JSON and an optional preview.
 
-## Visual rules
+The two scheduling scenarios use one shared time scale. The two pool policies use identical arrivals, server work and connection counts. The aggregation scenarios use the same upstream workload. Keep these comparisons intact when changing their parameters. Do not turn a pool diagram into a generic queue picture or replace a connection-count comparison with proportional bars.
 
-- Use a white surface, a subtle 5px dot grid, 1px dark borders and 4px card corners.
-- Keep a clear figure label, heading, short explanation, labeled playback control and legend.
-- Use restrained request squares, response circles and change diamonds. Name the legend for the actual semantics of the diagram.
-- Keep the board at its designed scale on narrow screens and allow horizontal scrolling. Do not shrink all text to fit a phone.
-- Use system fonts. Text dimensions can vary by platform, so inspect actual rendering rather than relying only on character counts.
-- Treat motion as a direction cue. Loop timing is not measured latency, packet count, throughput or a complete causal simulation.
-- Keep related functionality grouped without implying an unsupported execution order.
+## Preserve the blog's visual grammar
 
-## Quality and reuse
+Read [references/visual-language.md](references/visual-language.md). Use white surfaces, thin dark structure, small corner radii, restrained accents, compact mono annotations and a clear figure/title/explanation hierarchy. Architecture and request paths use the subtle dot grid. Timelines, pool demonstrations and connection scenarios use plain white backgrounds.
 
-Structural validation checks finite geometry, board bounds, duplicate IDs, node overlap, orthogonal segments, endpoint attachment and connectors through unrelated nodes. It does not prove semantic correctness or that labels fit.
+Preserve each case's own geometry and density. Timeline segments share a scale; pool resources are pills and workload entries are rectangles; aggregation uses retained connection rails, dashed idle lines and request/response markers. The blue/green/purple flow palette is not mandatory for every case: CPU timelines use their blue phase palette. Replay, phase selection and seeking appear where the case needs them.
 
-For deterministic screenshots, use `?time=2.4` to freeze animation and append `&scroll=500` to inspect a scrolled state. Respect reduced-motion preferences. Explain a technical diagram's assumptions in localized notes and attach relevant source links when useful.
+Do not add dashboard metrics, decorative curves, oversized numbers, arbitrary chart types or unrelated icons to make the figure look more elaborate. Customize the article's case rather than replacing its structure with a new visual metaphor.
 
-Keep this skill self-contained. Do not introduce extracted website code, unlicensed fonts, brand icons or copied article templates. Bundled original files use the accompanying MIT license; materials imported by a user retain their own terms. Creating local output does not itself publish it.
+## Language
+
+These instructions and authoring references stay in English. Generated figures follow the user's explicitly requested language, then conversation language, then a known application locale; otherwise use English. Never infer language from paths or usernames.
+
+Set `locale` and `direction`. Translate headings, descriptions, legends, notes, `content.labels`, participant captions, controls, tooltips and accessible names. Preserve appropriate protocol and code identifiers. Provide the six `ui` strings `play`, `pause`, `playAnimation`, `pauseAnimation`, `legend`, `scrollHint`; add `replay` for patterns that use it. Non-English patterns reject missing internal labels rather than silently mixing languages. Recheck text fit after translation.
+
+## Behavior and verification
+
+- Motion must follow the selected model. Preserve resource identity, return order, capacity, one-thread scheduling, counts and shared comparison conditions.
+- Use `?time=...&check=1` for repeatable captures and label-overflow diagnostics. Pattern details in the catalog explain the mapping from playback seconds to model time.
+- Inspect desktop and narrow layouts. Request flow has a vertical phone composition; pool reuse compacts its columns; architecture, paired timelines and aggregation preserve scale with horizontal scrolling.
+- Inspect initial, intermediate and outcome states. Exercise localized play/pause/replay, phase buttons or time seeking as applicable. Verify reduced-motion and visibility handling when the host can test them.
+- Correct layout and text before shrinking typography. The renderer cannot validate arbitrary technical explanations or prove fidelity in every browser.
+- Label timings and counts as illustrative unless they are actual measurements. The supplied cases do not establish general performance guarantees for FIFO, LIFO, Python or HTTP/2.
+
+## Additional authoring interfaces
+
+The [graph interface](references/graph-format.md) remains available for architecture topologies that need explicitly positioned nodes. The [scene interface](references/scene-format.md) is an escape hatch for adaptations beyond the bundled case parameters; retain the chosen case's structure and style. Neither is the default substitute for selecting a blog case.
+
+Keep output scoped and self-contained. Review executable scene code locally; do not pass through untrusted remote HTML. Do not distribute extracted website code, proprietary fonts or brand assets. Bundled original files use the MIT license. Generation does not publish a result.

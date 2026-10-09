@@ -1,2 +1,4 @@
 .DS_Store
 out/
+__pycache__/
+*.py[cod]

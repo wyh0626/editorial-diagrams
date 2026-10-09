@@ -1,4 +1,4 @@
 interface:
   display_name: "Editorial Diagrams"
-  short_description: "Plan, render and review precise interactive technical diagrams"
-  default_prompt: "Use $editorial-diagrams to create a clear technical diagram. Match the user's language, including controls and accessibility labels, and deliver the editable configuration, interactive HTML and a preview when available."
+  short_description: "Select and adapt engineering-blog diagram cases"
+  default_prompt: "Use editorial-diagrams to select the suitable engineering-blog case for my idea, adapt its participants and model, preserve its composition and visual grammar, localize all content and controls, and review the result."

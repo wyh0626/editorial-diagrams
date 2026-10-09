@@ -1,0 +1,64 @@
+{
+  "locale": "en",
+  "intro": "Follow a request from the client SDK through proxies and parallel service processes to storage.",
+  "sources": [
+    {
+      "title": "Reference article and source figures",
+      "url": "https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/"
+    }
+  ],
+  "pattern": "request-flow",
+  "kicker": "Figure 02 / Request path",
+  "title": "Separate storage logic into a shared service",
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Request"
+    },
+    {
+      "kind": "response",
+      "label": "Response"
+    }
+  ],
+  "content": {
+    "labels": {
+      "client": "Client",
+      "service": "Service deployment",
+      "resources": "Database accounts"
+    },
+    "client": "Habitat client SDK",
+    "ingress": "envoy",
+    "workers": [
+      {
+        "title": "habitat-service",
+        "subtitle": "Process 1"
+      },
+      {
+        "title": "habitat-service",
+        "subtitle": "Process 2"
+      },
+      {
+        "title": "habitat-service",
+        "subtitle": "Process 3"
+      }
+    ],
+    "egress": "habitat-envoy",
+    "resources": [
+      "habitat-cosmos-us0",
+      "habitat-cosmos-us1",
+      "habitat-cosmos-eu0"
+    ]
+  },
+  "notes": [
+    "Original implementation with system fonts; article-inspired composition, not an exact website copy. Timings and counts illustrate this model, not production measurements."
+  ],
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the figure",
+    "replay": "Replay"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "locale": "en",
+  "intro": "Keep the upstream workload identical while changing how downstream connections are retained and shared.",
+  "sources": [
+    {
+      "title": "Reference article and source figures",
+      "url": "https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/"
+    }
+  ],
+  "pattern": "connection-aggregation",
+  "kicker": "Figure 05 / Connection aggregation",
+  "title": "One workload, three connection strategies",
+  "legend": [
+    {
+      "shape": "square",
+      "color": "#70a0ff",
+      "label": "Request"
+    },
+    {
+      "shape": "circle",
+      "color": "#fff",
+      "label": "Response"
+    },
+    {
+      "shape": "line",
+      "color": "#777",
+      "label": "Idle keep-alive"
+    }
+  ],
+  "model": {
+    "pods": 6,
+    "peakPerPod": 3,
+    "concurrent": 6
+  },
+  "content": {
+    "proxy": "Envoy",
+    "storage": "Azure Cosmos\nDB",
+    "scenarios": [
+      {
+        "title": "Independent local pools",
+        "subtitle": "Six processes each retain a peak of three connections: eighteen open, six busy."
+      },
+      {
+        "title": "Shared HTTP/1 pool",
+        "subtitle": "The shared pool retains the aggregate peak: six connections for the same six requests.",
+        "protocol": "HTTP/1 → HTTP/1"
+      },
+      {
+        "title": "One multiplexed HTTP/2 connection",
+        "subtitle": "Six independent streams share one retained connection under the same stable workload.",
+        "protocol": "HTTP/1 → HTTP/2"
+      }
+    ],
+    "labels": {
+      "pods": "Client processes",
+      "storage": "Storage",
+      "pool": "Shared pool",
+      "pod": "Pod {id}",
+      "open": "Open connections: {count}",
+      "podStatus": "{active} active · peak {peak}",
+      "status": "{busy} busy · {idle} idle · {upstream} concurrent upstream requests"
+    }
+  },
+  "notes": [
+    "Original implementation with system fonts; article-inspired composition, not an exact website copy. Timings and counts illustrate this model, not production measurements."
+  ],
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the figure",
+    "replay": "Replay"
+  }
+}

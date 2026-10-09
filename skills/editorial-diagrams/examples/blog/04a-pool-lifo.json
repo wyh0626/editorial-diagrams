@@ -1,0 +1,52 @@
+{
+  "locale": "en",
+  "intro": "Returned connections form an ordered pool. Replay the same arrivals with last-in, first-out reuse.",
+  "sources": [
+    {
+      "title": "Reference article and source figures",
+      "url": "https://openai.com/zh-Hans-CN/index/scaling-storage-one-billion-users-part-one/"
+    }
+  ],
+  "pattern": "pool-reuse",
+  "kicker": "Figure 04A / Client connection reuse",
+  "title": "LIFO favors late-returning slow connections",
+  "legend": [],
+  "model": {
+    "policy": "lifo"
+  },
+  "content": {
+    "labels": {
+      "client": "Client process",
+      "key": "A1 identifies a connection to server A. Each server has three connections; only available ones appear here.",
+      "first": "Returned first",
+      "last": "Returned last",
+      "selected": "Selected connection",
+      "traffic": "Request and response paths",
+      "server": "Server process",
+      "concurrent": "Concurrent requests",
+      "history": "Subsequent requests",
+      "burst": "Initial burst",
+      "reuse": "Connection reuse",
+      "outcome": "Outcome",
+      "initialNarrative": "The burst sends three requests to each server; C processes work more slowly.",
+      "returnedNarrative": "A and B return connections first; C returns them later.",
+      "reuseNarrative": "LIFO chooses the most recently returned connection.",
+      "finalNarrative": "Later assignments: A = 9, B = 0, C = 9 in this illustrative schedule.",
+      "slower": "Slower server",
+      "overloaded": "Queued work",
+      "request": "Request {id}"
+    }
+  },
+  "notes": [
+    "Original implementation with system fonts; article-inspired composition, not an exact website copy. Timings and counts illustrate this model, not production measurements."
+  ],
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the figure",
+    "replay": "Replay"
+  }
+}
