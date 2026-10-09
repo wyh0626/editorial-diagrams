@@ -1,0 +1,585 @@
+{
+  "id": "api-gateway",
+  "kicker": "Figure 01 / API entry",
+  "title": "API gateway and business services",
+  "intro": "Illustrative architecture: callers access services through a gateway. Gateway capabilities are parallel; policy determines execution order. Telemetry is optional and asynchronous.",
+  "width": 1278,
+  "height": 650,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Request"
+    },
+    {
+      "kind": "response",
+      "label": "Response"
+    },
+    {
+      "kind": "change",
+      "label": "Async telemetry"
+    }
+  ],
+  "groups": [
+    {
+      "id": "callers",
+      "title": "Callers",
+      "x": 32,
+      "y": 70,
+      "w": 250,
+      "h": 400
+    },
+    {
+      "id": "services",
+      "title": "Business services",
+      "x": 884,
+      "y": 36,
+      "w": 362,
+      "h": 444
+    },
+    {
+      "id": "observability",
+      "title": "Optional asynchronous telemetry",
+      "x": 368,
+      "y": 502,
+      "w": 878,
+      "h": 116
+    }
+  ],
+  "nodes": [
+    {
+      "id": "web",
+      "x": 64,
+      "y": 130,
+      "w": 190,
+      "h": 66,
+      "title": "Web client",
+      "subtitle": "Browser calls",
+      "icon": "client",
+      "group": "callers"
+    },
+    {
+      "id": "mobile",
+      "x": 64,
+      "y": 242,
+      "w": 190,
+      "h": 66,
+      "title": "Mobile client",
+      "subtitle": "App calls",
+      "icon": "client",
+      "group": "callers"
+    },
+    {
+      "id": "partner",
+      "x": 64,
+      "y": 354,
+      "w": 190,
+      "h": 66,
+      "title": "Partner API",
+      "subtitle": "Service calls",
+      "icon": "api",
+      "group": "callers"
+    },
+    {
+      "id": "gateway",
+      "x": 390,
+      "y": 151,
+      "w": 360,
+      "h": 278,
+      "title": "API Gateway",
+      "subtitle": "Parallel capabilities",
+      "icon": "api",
+      "features": [
+        {
+          "title": "Identity",
+          "description": "Verify ID"
+        },
+        {
+          "title": "Access",
+          "description": "Check access"
+        },
+        {
+          "title": "Rate limit",
+          "description": "Limit rate"
+        },
+        {
+          "title": "Routing",
+          "description": "Pick service"
+        },
+        {
+          "title": "Protocol",
+          "description": "Adapt API"
+        },
+        {
+          "title": "Retry policy",
+          "description": "API policy"
+        }
+      ],
+      "featureColumns": 2
+    },
+    {
+      "id": "identity",
+      "x": 924,
+      "y": 90,
+      "w": 270,
+      "h": 64,
+      "title": "User service",
+      "subtitle": "Accounts / profiles",
+      "icon": "service",
+      "group": "services"
+    },
+    {
+      "id": "catalog",
+      "x": 924,
+      "y": 192,
+      "w": 270,
+      "h": 64,
+      "title": "Catalog service",
+      "subtitle": "Catalog / inventory",
+      "icon": "service",
+      "group": "services"
+    },
+    {
+      "id": "orders",
+      "x": 924,
+      "y": 294,
+      "w": 270,
+      "h": 64,
+      "title": "Order service",
+      "subtitle": "Order state",
+      "icon": "service",
+      "group": "services"
+    },
+    {
+      "id": "search",
+      "x": 924,
+      "y": 396,
+      "w": 270,
+      "h": 64,
+      "title": "Search service",
+      "subtitle": "Index queries",
+      "icon": "service",
+      "group": "services"
+    },
+    {
+      "id": "collector",
+      "x": 450,
+      "y": 542,
+      "w": 240,
+      "h": 64,
+      "title": "Collector",
+      "subtitle": "Logs / metrics / traces",
+      "icon": "stream",
+      "group": "observability"
+    },
+    {
+      "id": "telemetry",
+      "x": 924,
+      "y": 542,
+      "w": 270,
+      "h": 64,
+      "title": "Observability",
+      "subtitle": "Search / aggregate",
+      "icon": "database",
+      "group": "observability"
+    }
+  ],
+  "edges": [
+    {
+      "id": "web-request",
+      "from": "web",
+      "to": "gateway",
+      "kind": "request",
+      "points": [
+        [
+          254,
+          163
+        ],
+        [
+          310,
+          163
+        ],
+        [
+          310,
+          184
+        ],
+        [
+          390,
+          184
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "web-response",
+      "from": "gateway",
+      "to": "web",
+      "kind": "response",
+      "points": [
+        [
+          390,
+          184
+        ],
+        [
+          310,
+          184
+        ],
+        [
+          310,
+          163
+        ],
+        [
+          254,
+          163
+        ]
+      ],
+      "duration": 9,
+      "begin": -1.7
+    },
+    {
+      "id": "mobile-request",
+      "from": "mobile",
+      "to": "gateway",
+      "kind": "request",
+      "points": [
+        [
+          254,
+          275
+        ],
+        [
+          390,
+          275
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.7
+    },
+    {
+      "id": "mobile-response",
+      "from": "gateway",
+      "to": "mobile",
+      "kind": "response",
+      "points": [
+        [
+          390,
+          275
+        ],
+        [
+          254,
+          275
+        ]
+      ],
+      "duration": 9,
+      "begin": -3.4
+    },
+    {
+      "id": "partner-request",
+      "from": "partner",
+      "to": "gateway",
+      "kind": "request",
+      "points": [
+        [
+          254,
+          387
+        ],
+        [
+          310,
+          387
+        ],
+        [
+          310,
+          396
+        ],
+        [
+          390,
+          396
+        ]
+      ],
+      "duration": 8,
+      "begin": -5.4
+    },
+    {
+      "id": "partner-response",
+      "from": "gateway",
+      "to": "partner",
+      "kind": "response",
+      "points": [
+        [
+          390,
+          396
+        ],
+        [
+          310,
+          396
+        ],
+        [
+          310,
+          387
+        ],
+        [
+          254,
+          387
+        ]
+      ],
+      "duration": 9,
+      "begin": -6.8
+    },
+    {
+      "id": "identity-request",
+      "from": "gateway",
+      "to": "identity",
+      "kind": "request",
+      "points": [
+        [
+          750,
+          290
+        ],
+        [
+          842,
+          290
+        ],
+        [
+          842,
+          122
+        ],
+        [
+          924,
+          122
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "identity-response",
+      "from": "identity",
+      "to": "gateway",
+      "kind": "response",
+      "points": [
+        [
+          924,
+          122
+        ],
+        [
+          842,
+          122
+        ],
+        [
+          842,
+          290
+        ],
+        [
+          750,
+          290
+        ]
+      ],
+      "duration": 9,
+      "begin": -1.55
+    },
+    {
+      "id": "catalog-request",
+      "from": "gateway",
+      "to": "catalog",
+      "kind": "request",
+      "points": [
+        [
+          750,
+          290
+        ],
+        [
+          870,
+          290
+        ],
+        [
+          870,
+          224
+        ],
+        [
+          924,
+          224
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.25
+    },
+    {
+      "id": "catalog-response",
+      "from": "catalog",
+      "to": "gateway",
+      "kind": "response",
+      "points": [
+        [
+          924,
+          224
+        ],
+        [
+          870,
+          224
+        ],
+        [
+          870,
+          290
+        ],
+        [
+          750,
+          290
+        ]
+      ],
+      "duration": 9,
+      "begin": -3.1
+    },
+    {
+      "id": "orders-request",
+      "from": "gateway",
+      "to": "orders",
+      "kind": "request",
+      "points": [
+        [
+          750,
+          290
+        ],
+        [
+          870,
+          290
+        ],
+        [
+          870,
+          326
+        ],
+        [
+          924,
+          326
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.5
+    },
+    {
+      "id": "orders-response",
+      "from": "orders",
+      "to": "gateway",
+      "kind": "response",
+      "points": [
+        [
+          924,
+          326
+        ],
+        [
+          870,
+          326
+        ],
+        [
+          870,
+          290
+        ],
+        [
+          750,
+          290
+        ]
+      ],
+      "duration": 9,
+      "begin": -4.65
+    },
+    {
+      "id": "search-request",
+      "from": "gateway",
+      "to": "search",
+      "kind": "request",
+      "points": [
+        [
+          750,
+          290
+        ],
+        [
+          842,
+          290
+        ],
+        [
+          842,
+          428
+        ],
+        [
+          924,
+          428
+        ]
+      ],
+      "duration": 8,
+      "begin": -3.75
+    },
+    {
+      "id": "search-response",
+      "from": "search",
+      "to": "gateway",
+      "kind": "response",
+      "points": [
+        [
+          924,
+          428
+        ],
+        [
+          842,
+          428
+        ],
+        [
+          842,
+          290
+        ],
+        [
+          750,
+          290
+        ]
+      ],
+      "duration": 9,
+      "begin": -6.2
+    },
+    {
+      "id": "telemetry-emission",
+      "from": "gateway",
+      "to": "collector",
+      "kind": "change",
+      "label": "Async telemetry",
+      "labelX": 582,
+      "labelY": 492,
+      "points": [
+        [
+          570,
+          429
+        ],
+        [
+          570,
+          542
+        ]
+      ],
+      "duration": 4,
+      "begin": 0
+    },
+    {
+      "id": "telemetry-export",
+      "from": "collector",
+      "to": "telemetry",
+      "kind": "change",
+      "points": [
+        [
+          690,
+          574
+        ],
+        [
+          924,
+          574
+        ]
+      ],
+      "duration": 7,
+      "begin": -1.4
+    }
+  ],
+  "locale": "en",
+  "direction": "ltr",
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the diagram"
+  }
+}

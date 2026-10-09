@@ -1,0 +1,454 @@
+{
+  "id": "order-events",
+  "kicker": "Figure 02 / Orders and events",
+  "title": "Commit the transaction, then publish events",
+  "intro": "Order and outbox records commit in one local database transaction. Publication runs asynchronously after commit. Delivery can repeat; consumers deduplicate by event ID.",
+  "width": 1278,
+  "height": 650,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Requests and writes"
+    },
+    {
+      "kind": "response",
+      "label": "Commit response"
+    },
+    {
+      "kind": "change",
+      "label": "Async events"
+    }
+  ],
+  "groups": [
+    {
+      "id": "order-tx",
+      "title": "One database / local transaction",
+      "x": 700,
+      "y": 42,
+      "w": 250,
+      "h": 310
+    }
+  ],
+  "nodes": [
+    {
+      "id": "client",
+      "x": 32,
+      "y": 150,
+      "w": 160,
+      "h": 72,
+      "title": "Buyer",
+      "subtitle": "Place order",
+      "icon": "client"
+    },
+    {
+      "id": "api",
+      "x": 240,
+      "y": 150,
+      "w": 160,
+      "h": 72,
+      "title": "Order API",
+      "subtitle": "Validate input",
+      "icon": "api"
+    },
+    {
+      "id": "order",
+      "x": 455,
+      "y": 141,
+      "w": 180,
+      "h": 90,
+      "title": "Order service",
+      "subtitle": "Order + outbox",
+      "icon": "service"
+    },
+    {
+      "id": "orders",
+      "x": 735,
+      "y": 90,
+      "w": 180,
+      "h": 72,
+      "title": "Order record",
+      "subtitle": "Orders / same DB",
+      "icon": "database",
+      "group": "order-tx"
+    },
+    {
+      "id": "outbox",
+      "x": 735,
+      "y": 255,
+      "w": 180,
+      "h": 72,
+      "title": "Pending event",
+      "subtitle": "Outbox / same DB",
+      "icon": "database",
+      "group": "order-tx"
+    },
+    {
+      "id": "retry",
+      "x": 470,
+      "y": 410,
+      "w": 180,
+      "h": 72,
+      "title": "Retry job",
+      "subtitle": "Backoff / schedule",
+      "icon": "service"
+    },
+    {
+      "id": "relay",
+      "x": 735,
+      "y": 410,
+      "w": 180,
+      "h": 72,
+      "title": "Outbox relay",
+      "subtitle": "Committed only",
+      "icon": "stream"
+    },
+    {
+      "id": "bus",
+      "x": 1000,
+      "y": 410,
+      "w": 230,
+      "h": 72,
+      "title": "Event bus",
+      "subtitle": "At-least-once",
+      "icon": "stream"
+    },
+    {
+      "id": "inventory",
+      "x": 1030,
+      "y": 60,
+      "w": 180,
+      "h": 72,
+      "title": "Inventory",
+      "subtitle": "Dedupe event ID",
+      "icon": "service"
+    },
+    {
+      "id": "payment",
+      "x": 1030,
+      "y": 170,
+      "w": 180,
+      "h": 72,
+      "title": "Payment",
+      "subtitle": "Dedupe event ID",
+      "icon": "service"
+    },
+    {
+      "id": "notification",
+      "x": 1030,
+      "y": 280,
+      "w": 180,
+      "h": 72,
+      "title": "Notification",
+      "subtitle": "Dedupe event ID",
+      "icon": "service"
+    },
+    {
+      "id": "projection",
+      "x": 1030,
+      "y": 545,
+      "w": 180,
+      "h": 72,
+      "title": "Order view",
+      "subtitle": "Event updates",
+      "icon": "database"
+    }
+  ],
+  "edges": [
+    {
+      "id": "submit",
+      "from": "client",
+      "to": "api",
+      "kind": "request",
+      "points": [
+        [
+          192,
+          186
+        ],
+        [
+          240,
+          186
+        ]
+      ],
+      "duration": 8,
+      "label": "Commit",
+      "labelX": 216,
+      "labelY": 174,
+      "begin": 0.0
+    },
+    {
+      "id": "command",
+      "from": "api",
+      "to": "order",
+      "kind": "request",
+      "points": [
+        [
+          400,
+          186
+        ],
+        [
+          455,
+          186
+        ]
+      ],
+      "duration": 8,
+      "begin": -0.55
+    },
+    {
+      "id": "write-order",
+      "from": "order",
+      "to": "orders",
+      "kind": "request",
+      "points": [
+        [
+          635,
+          186
+        ],
+        [
+          680,
+          186
+        ],
+        [
+          680,
+          126
+        ],
+        [
+          735,
+          126
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.1
+    },
+    {
+      "id": "write-outbox",
+      "from": "order",
+      "to": "outbox",
+      "kind": "request",
+      "points": [
+        [
+          635,
+          208
+        ],
+        [
+          665,
+          208
+        ],
+        [
+          665,
+          291
+        ],
+        [
+          735,
+          291
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.65
+    },
+    {
+      "id": "commit-result",
+      "from": "order",
+      "to": "api",
+      "kind": "response",
+      "points": [
+        [
+          455,
+          201
+        ],
+        [
+          400,
+          201
+        ]
+      ],
+      "duration": 9,
+      "label": "Committed",
+      "labelX": 427.5,
+      "labelY": 213,
+      "begin": -2.2
+    },
+    {
+      "id": "client-result",
+      "from": "api",
+      "to": "client",
+      "kind": "response",
+      "points": [
+        [
+          240,
+          201
+        ],
+        [
+          192,
+          201
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.75
+    },
+    {
+      "id": "committed-records",
+      "from": "outbox",
+      "to": "relay",
+      "kind": "change",
+      "points": [
+        [
+          825,
+          327
+        ],
+        [
+          825,
+          410
+        ]
+      ],
+      "duration": 7,
+      "begin": -3.3
+    },
+    {
+      "id": "retry-publish",
+      "from": "retry",
+      "to": "relay",
+      "kind": "request",
+      "points": [
+        [
+          650,
+          446
+        ],
+        [
+          735,
+          446
+        ]
+      ],
+      "duration": 8,
+      "label": "Retry",
+      "labelX": 692.5,
+      "labelY": 434,
+      "begin": -3.85
+    },
+    {
+      "id": "publish",
+      "from": "relay",
+      "to": "bus",
+      "kind": "change",
+      "points": [
+        [
+          915,
+          446
+        ],
+        [
+          1000,
+          446
+        ]
+      ],
+      "duration": 7,
+      "label": "Publish",
+      "labelX": 957.5,
+      "labelY": 434,
+      "begin": -4.4
+    },
+    {
+      "id": "inventory-event",
+      "from": "bus",
+      "to": "inventory",
+      "kind": "change",
+      "points": [
+        [
+          1230,
+          446
+        ],
+        [
+          1246,
+          446
+        ],
+        [
+          1246,
+          96
+        ],
+        [
+          1210,
+          96
+        ]
+      ],
+      "duration": 7,
+      "begin": -4.95
+    },
+    {
+      "id": "payment-event",
+      "from": "bus",
+      "to": "payment",
+      "kind": "change",
+      "points": [
+        [
+          1230,
+          446
+        ],
+        [
+          1246,
+          446
+        ],
+        [
+          1246,
+          206
+        ],
+        [
+          1210,
+          206
+        ]
+      ],
+      "duration": 7,
+      "begin": -5.5
+    },
+    {
+      "id": "notification-event",
+      "from": "bus",
+      "to": "notification",
+      "kind": "change",
+      "points": [
+        [
+          1230,
+          446
+        ],
+        [
+          1246,
+          446
+        ],
+        [
+          1246,
+          316
+        ],
+        [
+          1210,
+          316
+        ]
+      ],
+      "duration": 7,
+      "begin": -6.05
+    },
+    {
+      "id": "projection-event",
+      "from": "bus",
+      "to": "projection",
+      "kind": "change",
+      "points": [
+        [
+          1115,
+          482
+        ],
+        [
+          1115,
+          545
+        ]
+      ],
+      "duration": 7,
+      "begin": -6.6
+    }
+  ],
+  "locale": "en",
+  "direction": "ltr",
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the diagram"
+  }
+}

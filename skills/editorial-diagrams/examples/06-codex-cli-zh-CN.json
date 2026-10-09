@@ -1,0 +1,745 @@
+{
+  "id": "codex-architecture",
+  "locale": "zh-CN",
+  "direction": "ltr",
+  "ui": {
+    "play": "播放",
+    "pause": "暂停",
+    "playAnimation": "播放动画",
+    "pauseAnimation": "暂停动画",
+    "legend": "图例",
+    "scrollHint": "横向滚动查看完整架构图"
+  },
+  "kicker": "图 06 / OpenAI Codex CLI",
+  "title": "Codex CLI 运行架构",
+  "intro": "基于 openai/codex 仓库 main @ 2351d9e1b6 的 Cargo 依赖和源码整理：终端界面与 exec 通过 app-server-client 在进程内（或连接远程 daemon）使用 app-server；SDK 与 IDE 等外部客户端经 stdio、Unix socket 或 WebSocket 走同一 JSON-RPC 协议；app-server 再驱动 codex-core 的智能体循环。",
+  "width": 1804,
+  "height": 620,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "请求 / 调用"
+    },
+    {
+      "kind": "response",
+      "label": "返回 / 事件"
+    },
+    {
+      "kind": "change",
+      "label": "异步写入"
+    }
+  ],
+  "groups": [
+    {
+      "id": "surfaces",
+      "title": "使用入口",
+      "x": 32,
+      "y": 56,
+      "w": 252,
+      "h": 522
+    },
+    {
+      "id": "access",
+      "title": "客户端接入层",
+      "x": 332,
+      "y": 56,
+      "w": 316,
+      "h": 522
+    },
+    {
+      "id": "server",
+      "title": "协议服务层",
+      "x": 672,
+      "y": 56,
+      "w": 308,
+      "h": 522
+    },
+    {
+      "id": "corebox",
+      "title": "智能体内核",
+      "x": 1020,
+      "y": 56,
+      "w": 388,
+      "h": 522
+    },
+    {
+      "id": "ext",
+      "title": "模型 · 工具 · 存储",
+      "x": 1456,
+      "y": 56,
+      "w": 316,
+      "h": 522
+    }
+  ],
+  "nodes": [
+    {
+      "id": "tui",
+      "title": "codex 终端界面",
+      "subtitle": "TUI · ratatui",
+      "icon": "client",
+      "x": 56,
+      "y": 100,
+      "w": 204,
+      "h": 66,
+      "group": "surfaces"
+    },
+    {
+      "id": "exec",
+      "title": "codex exec",
+      "subtitle": "非交互 · CI 自动化",
+      "icon": "client",
+      "x": 56,
+      "y": 196,
+      "w": 204,
+      "h": 66,
+      "group": "surfaces"
+    },
+    {
+      "id": "ts",
+      "title": "TypeScript SDK",
+      "subtitle": "子进程调用 exec",
+      "icon": "api",
+      "x": 56,
+      "y": 292,
+      "w": 204,
+      "h": 66,
+      "group": "surfaces"
+    },
+    {
+      "id": "py",
+      "title": "Python SDK",
+      "subtitle": "app-server · stdio",
+      "icon": "api",
+      "x": 56,
+      "y": 388,
+      "w": 204,
+      "h": 66,
+      "group": "surfaces"
+    },
+    {
+      "id": "ide",
+      "title": "IDE 扩展等客户端",
+      "subtitle": "JSON-RPC 外部客户端",
+      "icon": "client",
+      "x": 56,
+      "y": 484,
+      "w": 204,
+      "h": 66,
+      "group": "surfaces"
+    },
+    {
+      "id": "client",
+      "title": "app-server-client",
+      "subtitle": "进程内 · 远程 daemon",
+      "icon": "service",
+      "x": 380,
+      "y": 112,
+      "w": 220,
+      "h": 130,
+      "group": "access"
+    },
+    {
+      "id": "transport",
+      "title": "app-server-transport",
+      "subtitle": "stdio · Unix · WebSocket",
+      "icon": "stream",
+      "x": 380,
+      "y": 400,
+      "w": 220,
+      "h": 130,
+      "group": "access"
+    },
+    {
+      "id": "appsrv",
+      "title": "codex app-server",
+      "subtitle": "JSON-RPC · app-server-protocol",
+      "icon": "api",
+      "x": 696,
+      "y": 225,
+      "w": 260,
+      "h": 210,
+      "group": "server",
+      "featureColumns": 2,
+      "features": [
+        {
+          "title": "Thread/Turn",
+          "description": "会话与轮次"
+        },
+        {
+          "title": "事件通知",
+          "description": "流式进度"
+        },
+        {
+          "title": "审批请求",
+          "description": "命令 · 补丁"
+        },
+        {
+          "title": "账号配置",
+          "description": "登录 · 插件"
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "title": "codex-core",
+      "subtitle": "智能体循环与会话",
+      "icon": "service",
+      "x": 1044,
+      "y": 190,
+      "w": 340,
+      "h": 280,
+      "group": "corebox",
+      "featureColumns": 2,
+      "features": [
+        {
+          "title": "ThreadManager",
+          "description": "多会话管理"
+        },
+        {
+          "title": "Turn 循环",
+          "description": "模型 ↔ 工具"
+        },
+        {
+          "title": "上下文",
+          "description": "AGENTS.md · 压缩"
+        },
+        {
+          "title": "工具路由",
+          "description": "shell · patch · MCP"
+        },
+        {
+          "title": "安全策略",
+          "description": "execpolicy · 审批"
+        },
+        {
+          "title": "扩展",
+          "description": "Skills · Hooks"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "title": "模型 API",
+      "subtitle": "codex-api → /responses",
+      "icon": "api",
+      "x": 1480,
+      "y": 110,
+      "w": 268,
+      "h": 66,
+      "group": "ext"
+    },
+    {
+      "id": "mcp",
+      "title": "MCP 服务器",
+      "subtitle": "rmcp-client · stdio / HTTP",
+      "icon": "service",
+      "x": 1480,
+      "y": 220,
+      "w": 268,
+      "h": 66,
+      "group": "ext"
+    },
+    {
+      "id": "sandbox",
+      "title": "命令执行与沙箱",
+      "subtitle": "Seatbelt · bwrap · Windows",
+      "icon": "service",
+      "x": 1480,
+      "y": 330,
+      "w": 268,
+      "h": 66,
+      "group": "ext"
+    },
+    {
+      "id": "store",
+      "title": "本地持久化",
+      "subtitle": "rollout JSONL · SQLite",
+      "icon": "database",
+      "x": 1480,
+      "y": 440,
+      "w": 268,
+      "h": 66,
+      "group": "ext"
+    }
+  ],
+  "edges": [
+    {
+      "id": "tui-req",
+      "from": "tui",
+      "to": "client",
+      "kind": "request",
+      "points": [
+        [
+          260,
+          133
+        ],
+        [
+          380,
+          133
+        ]
+      ],
+      "begin": 0
+    },
+    {
+      "id": "tui-resp",
+      "from": "client",
+      "to": "tui",
+      "kind": "response",
+      "points": [
+        [
+          380,
+          133
+        ],
+        [
+          260,
+          133
+        ]
+      ],
+      "begin": -1.7
+    },
+    {
+      "id": "exec-req",
+      "from": "exec",
+      "to": "client",
+      "kind": "request",
+      "points": [
+        [
+          260,
+          229
+        ],
+        [
+          380,
+          229
+        ]
+      ],
+      "begin": -1.5
+    },
+    {
+      "id": "exec-resp",
+      "from": "client",
+      "to": "exec",
+      "kind": "response",
+      "points": [
+        [
+          380,
+          229
+        ],
+        [
+          260,
+          229
+        ]
+      ],
+      "begin": -3.2
+    },
+    {
+      "id": "ts-spawn",
+      "from": "ts",
+      "to": "exec",
+      "kind": "request",
+      "points": [
+        [
+          158,
+          292
+        ],
+        [
+          158,
+          262
+        ]
+      ],
+      "duration": 4,
+      "begin": -0.5
+    },
+    {
+      "id": "py-req",
+      "from": "py",
+      "to": "transport",
+      "kind": "request",
+      "points": [
+        [
+          260,
+          421
+        ],
+        [
+          380,
+          421
+        ]
+      ],
+      "begin": -3
+    },
+    {
+      "id": "py-resp",
+      "from": "transport",
+      "to": "py",
+      "kind": "response",
+      "points": [
+        [
+          380,
+          421
+        ],
+        [
+          260,
+          421
+        ]
+      ],
+      "begin": -4.7
+    },
+    {
+      "id": "ide-req",
+      "from": "ide",
+      "to": "transport",
+      "kind": "request",
+      "points": [
+        [
+          260,
+          517
+        ],
+        [
+          380,
+          517
+        ]
+      ],
+      "begin": -4.5
+    },
+    {
+      "id": "ide-resp",
+      "from": "transport",
+      "to": "ide",
+      "kind": "response",
+      "points": [
+        [
+          380,
+          517
+        ],
+        [
+          260,
+          517
+        ]
+      ],
+      "begin": -6.2
+    },
+    {
+      "id": "client-app-req",
+      "from": "client",
+      "to": "appsrv",
+      "kind": "request",
+      "points": [
+        [
+          600,
+          177
+        ],
+        [
+          636,
+          177
+        ],
+        [
+          636,
+          270
+        ],
+        [
+          696,
+          270
+        ]
+      ],
+      "begin": -0.6
+    },
+    {
+      "id": "client-app-resp",
+      "from": "appsrv",
+      "to": "client",
+      "kind": "response",
+      "points": [
+        [
+          696,
+          270
+        ],
+        [
+          636,
+          270
+        ],
+        [
+          636,
+          177
+        ],
+        [
+          600,
+          177
+        ]
+      ],
+      "begin": -2.3
+    },
+    {
+      "id": "transport-app-req",
+      "from": "transport",
+      "to": "appsrv",
+      "kind": "request",
+      "points": [
+        [
+          600,
+          465
+        ],
+        [
+          636,
+          465
+        ],
+        [
+          636,
+          390
+        ],
+        [
+          696,
+          390
+        ]
+      ],
+      "begin": -2.4
+    },
+    {
+      "id": "transport-app-resp",
+      "from": "appsrv",
+      "to": "transport",
+      "kind": "response",
+      "points": [
+        [
+          696,
+          390
+        ],
+        [
+          636,
+          390
+        ],
+        [
+          636,
+          465
+        ],
+        [
+          600,
+          465
+        ]
+      ],
+      "begin": -4.1
+    },
+    {
+      "id": "app-core-req",
+      "from": "appsrv",
+      "to": "core",
+      "kind": "request",
+      "points": [
+        [
+          956,
+          330
+        ],
+        [
+          1044,
+          330
+        ]
+      ],
+      "begin": -1.2
+    },
+    {
+      "id": "app-core-resp",
+      "from": "core",
+      "to": "appsrv",
+      "kind": "response",
+      "points": [
+        [
+          1044,
+          330
+        ],
+        [
+          956,
+          330
+        ]
+      ],
+      "begin": -2.9
+    },
+    {
+      "id": "core-model-req",
+      "from": "core",
+      "to": "model",
+      "kind": "request",
+      "points": [
+        [
+          1384,
+          330
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1432,
+          143
+        ],
+        [
+          1480,
+          143
+        ]
+      ],
+      "begin": 0.0
+    },
+    {
+      "id": "core-model-resp",
+      "from": "model",
+      "to": "core",
+      "kind": "response",
+      "points": [
+        [
+          1480,
+          143
+        ],
+        [
+          1432,
+          143
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1384,
+          330
+        ]
+      ],
+      "begin": -1.7
+    },
+    {
+      "id": "core-mcp-req",
+      "from": "core",
+      "to": "mcp",
+      "kind": "request",
+      "points": [
+        [
+          1384,
+          330
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1432,
+          253
+        ],
+        [
+          1480,
+          253
+        ]
+      ],
+      "begin": -1.4
+    },
+    {
+      "id": "core-mcp-resp",
+      "from": "mcp",
+      "to": "core",
+      "kind": "response",
+      "points": [
+        [
+          1480,
+          253
+        ],
+        [
+          1432,
+          253
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1384,
+          330
+        ]
+      ],
+      "begin": -3.0999999999999996
+    },
+    {
+      "id": "core-sandbox-req",
+      "from": "core",
+      "to": "sandbox",
+      "kind": "request",
+      "points": [
+        [
+          1384,
+          330
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1432,
+          363
+        ],
+        [
+          1480,
+          363
+        ]
+      ],
+      "begin": -2.8
+    },
+    {
+      "id": "core-sandbox-resp",
+      "from": "sandbox",
+      "to": "core",
+      "kind": "response",
+      "points": [
+        [
+          1480,
+          363
+        ],
+        [
+          1432,
+          363
+        ],
+        [
+          1432,
+          330
+        ],
+        [
+          1384,
+          330
+        ]
+      ],
+      "begin": -4.5
+    },
+    {
+      "id": "core-store",
+      "from": "core",
+      "to": "store",
+      "kind": "change",
+      "points": [
+        [
+          1384,
+          450
+        ],
+        [
+          1420,
+          450
+        ],
+        [
+          1420,
+          473
+        ],
+        [
+          1480,
+          473
+        ]
+      ],
+      "label": "写入会话",
+      "labelX": 1450,
+      "labelY": 473,
+      "begin": -2
+    }
+  ],
+  "notes": [
+    "tui crate 不直接依赖 codex-core，统一经 app-server-client；exec 也经 app-server-client 发起会话，但仍直接使用 codex-core 的配置与执行策略检查等工具。",
+    "TypeScript SDK 以子进程运行 `codex exec --experimental-json`；Python SDK 以子进程运行 `codex app-server --listen stdio://`。",
+    "IDE 接入依据 app-server 中的 SessionSource::VSCode；IDE 扩展和桌面 App 的客户端代码不在本仓库，具体连接方式未在此验证。",
+    "沙箱按平台选择：macOS Seatbelt、Linux bwrap / Landlock、Windows 沙箱；exec-server 负责本地或远程的进程与文件操作。动画仅表示方向，不代表耗时或流量。"
+  ],
+  "sources": [
+    {
+      "title": "openai/codex",
+      "url": "https://github.com/openai/codex"
+    }
+  ]
+}

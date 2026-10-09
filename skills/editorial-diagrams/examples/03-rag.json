@@ -1,0 +1,572 @@
+{
+  "id": "rag",
+  "kicker": "Figure 03 / Retrieval-augmented generation",
+  "title": "Separate query and knowledge-ingestion paths",
+  "intro": "Retrieve relevant knowledge before generating an answer with citations. Knowledge ingestion runs independently; generated answers are not written back into the knowledge base.",
+  "width": 1278,
+  "height": 650,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Queries and processing"
+    },
+    {
+      "kind": "response",
+      "label": "Results and answers"
+    },
+    {
+      "kind": "change",
+      "label": "Knowledge updates"
+    }
+  ],
+  "groups": [
+    {
+      "id": "query-path",
+      "title": "Online queries / retrieve before generation",
+      "x": 32,
+      "y": 42,
+      "w": 1214,
+      "h": 300
+    },
+    {
+      "id": "ingest-path",
+      "title": "Knowledge ingestion / independent background path",
+      "x": 32,
+      "y": 410,
+      "w": 1214,
+      "h": 208
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user",
+      "x": 64,
+      "y": 105,
+      "w": 160,
+      "h": 72,
+      "title": "User",
+      "subtitle": "Ask a question",
+      "icon": "client",
+      "group": "query-path"
+    },
+    {
+      "id": "query-api",
+      "x": 282,
+      "y": 105,
+      "w": 180,
+      "h": 72,
+      "title": "Query API",
+      "subtitle": "Validate / auth",
+      "icon": "api",
+      "group": "query-path"
+    },
+    {
+      "id": "query-embedding",
+      "x": 520,
+      "y": 105,
+      "w": 180,
+      "h": 72,
+      "title": "Query embedding",
+      "subtitle": "Encode query",
+      "icon": "service",
+      "group": "query-path"
+    },
+    {
+      "id": "retrieval",
+      "x": 758,
+      "y": 105,
+      "w": 180,
+      "h": 72,
+      "title": "Retriever",
+      "subtitle": "Retrieve first",
+      "icon": "service",
+      "group": "query-path"
+    },
+    {
+      "id": "rerank",
+      "x": 996,
+      "y": 105,
+      "w": 180,
+      "h": 72,
+      "title": "Reranker",
+      "subtitle": "Rank candidates",
+      "icon": "service",
+      "group": "query-path"
+    },
+    {
+      "id": "context",
+      "x": 996,
+      "y": 245,
+      "w": 180,
+      "h": 72,
+      "title": "Context",
+      "subtitle": "Chunks / citations",
+      "icon": "service",
+      "group": "query-path"
+    },
+    {
+      "id": "model",
+      "x": 758,
+      "y": 245,
+      "w": 180,
+      "h": 72,
+      "title": "Language model",
+      "subtitle": "Retrieved context",
+      "icon": "service",
+      "group": "query-path"
+    },
+    {
+      "id": "answer",
+      "x": 520,
+      "y": 245,
+      "w": 180,
+      "h": 72,
+      "title": "Answer",
+      "subtitle": "Cite / return only",
+      "icon": "api",
+      "group": "query-path"
+    },
+    {
+      "id": "documents",
+      "x": 64,
+      "y": 465,
+      "w": 180,
+      "h": 72,
+      "title": "Documents",
+      "subtitle": "New or updated",
+      "icon": "blob",
+      "group": "ingest-path"
+    },
+    {
+      "id": "parser",
+      "x": 300,
+      "y": 465,
+      "w": 180,
+      "h": 72,
+      "title": "Processing",
+      "subtitle": "Parse / split",
+      "icon": "service",
+      "group": "ingest-path"
+    },
+    {
+      "id": "chunk-embedding",
+      "x": 536,
+      "y": 465,
+      "w": 180,
+      "h": 72,
+      "title": "Embedding",
+      "subtitle": "Encode chunks",
+      "icon": "service",
+      "group": "ingest-path"
+    },
+    {
+      "id": "vector-store",
+      "x": 772,
+      "y": 465,
+      "w": 180,
+      "h": 72,
+      "title": "Vector index",
+      "subtitle": "Vectors / chunk IDs",
+      "icon": "database",
+      "group": "ingest-path"
+    },
+    {
+      "id": "chunk-store",
+      "x": 1010,
+      "y": 465,
+      "w": 210,
+      "h": 72,
+      "title": "Chunk store",
+      "subtitle": "Text / metadata",
+      "icon": "blob",
+      "group": "ingest-path"
+    }
+  ],
+  "edges": [
+    {
+      "id": "question",
+      "from": "user",
+      "to": "query-api",
+      "kind": "request",
+      "points": [
+        [
+          224,
+          141
+        ],
+        [
+          282,
+          141
+        ]
+      ],
+      "duration": 8,
+      "begin": 0.0
+    },
+    {
+      "id": "query-vector",
+      "from": "query-api",
+      "to": "query-embedding",
+      "kind": "request",
+      "points": [
+        [
+          462,
+          141
+        ],
+        [
+          520,
+          141
+        ]
+      ],
+      "duration": 8,
+      "begin": -0.55
+    },
+    {
+      "id": "retrieve-command",
+      "from": "query-embedding",
+      "to": "retrieval",
+      "kind": "request",
+      "points": [
+        [
+          700,
+          141
+        ],
+        [
+          758,
+          141
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.1
+    },
+    {
+      "id": "rerank-command",
+      "from": "retrieval",
+      "to": "rerank",
+      "kind": "request",
+      "points": [
+        [
+          938,
+          141
+        ],
+        [
+          996,
+          141
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.65
+    },
+    {
+      "id": "selected-candidates",
+      "from": "rerank",
+      "to": "context",
+      "kind": "request",
+      "points": [
+        [
+          1086,
+          177
+        ],
+        [
+          1086,
+          245
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.2
+    },
+    {
+      "id": "model-context",
+      "from": "context",
+      "to": "model",
+      "kind": "request",
+      "points": [
+        [
+          996,
+          281
+        ],
+        [
+          938,
+          281
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.75
+    },
+    {
+      "id": "generated-answer",
+      "from": "model",
+      "to": "answer",
+      "kind": "response",
+      "points": [
+        [
+          758,
+          281
+        ],
+        [
+          700,
+          281
+        ]
+      ],
+      "duration": 9,
+      "label": "Generate",
+      "labelX": 729,
+      "labelY": 269,
+      "begin": -3.3
+    },
+    {
+      "id": "user-answer",
+      "from": "answer",
+      "to": "user",
+      "kind": "response",
+      "points": [
+        [
+          520,
+          281
+        ],
+        [
+          144,
+          281
+        ],
+        [
+          144,
+          177
+        ]
+      ],
+      "duration": 9,
+      "label": "Answer",
+      "labelX": 332,
+      "labelY": 269,
+      "begin": -3.85
+    },
+    {
+      "id": "vector-query",
+      "from": "retrieval",
+      "to": "vector-store",
+      "kind": "request",
+      "points": [
+        [
+          818,
+          177
+        ],
+        [
+          818,
+          200
+        ],
+        [
+          964,
+          200
+        ],
+        [
+          964,
+          430
+        ],
+        [
+          842,
+          430
+        ],
+        [
+          842,
+          465
+        ]
+      ],
+      "duration": 8,
+      "label": "Retrieve",
+      "labelX": 930,
+      "labelY": 188,
+      "begin": -4.4
+    },
+    {
+      "id": "vector-results",
+      "from": "vector-store",
+      "to": "retrieval",
+      "kind": "response",
+      "points": [
+        [
+          882,
+          465
+        ],
+        [
+          882,
+          440
+        ],
+        [
+          980,
+          440
+        ],
+        [
+          980,
+          220
+        ],
+        [
+          878,
+          220
+        ],
+        [
+          878,
+          177
+        ]
+      ],
+      "duration": 9,
+      "label": "Candidates",
+      "labelX": 900,
+      "labelY": 232,
+      "begin": -4.95
+    },
+    {
+      "id": "fetch-source",
+      "from": "context",
+      "to": "chunk-store",
+      "kind": "request",
+      "points": [
+        [
+          1126,
+          317
+        ],
+        [
+          1126,
+          380
+        ],
+        [
+          1155,
+          380
+        ],
+        [
+          1155,
+          465
+        ]
+      ],
+      "duration": 8,
+      "begin": -5.75
+    },
+    {
+      "id": "source-chunks",
+      "from": "chunk-store",
+      "to": "context",
+      "kind": "response",
+      "points": [
+        [
+          1115,
+          465
+        ],
+        [
+          1115,
+          362
+        ],
+        [
+          1046,
+          362
+        ],
+        [
+          1046,
+          317
+        ]
+      ],
+      "duration": 9,
+      "label": "Chunks",
+      "labelX": 1080,
+      "labelY": 374,
+      "begin": -5.5
+    },
+    {
+      "id": "document-update",
+      "from": "documents",
+      "to": "parser",
+      "kind": "change",
+      "points": [
+        [
+          244,
+          501
+        ],
+        [
+          300,
+          501
+        ]
+      ],
+      "duration": 7,
+      "label": "Update",
+      "labelX": 272,
+      "labelY": 489,
+      "begin": -6.05
+    },
+    {
+      "id": "embed-chunks",
+      "from": "parser",
+      "to": "chunk-embedding",
+      "kind": "request",
+      "points": [
+        [
+          480,
+          501
+        ],
+        [
+          536,
+          501
+        ]
+      ],
+      "duration": 8,
+      "label": "Split",
+      "labelX": 508,
+      "labelY": 489,
+      "begin": -6.6
+    },
+    {
+      "id": "index-chunks",
+      "from": "chunk-embedding",
+      "to": "vector-store",
+      "kind": "change",
+      "points": [
+        [
+          716,
+          501
+        ],
+        [
+          772,
+          501
+        ]
+      ],
+      "duration": 7,
+      "label": "Index",
+      "labelX": 744,
+      "labelY": 489,
+      "begin": -7.15
+    },
+    {
+      "id": "store-source",
+      "from": "parser",
+      "to": "chunk-store",
+      "kind": "change",
+      "points": [
+        [
+          390,
+          537
+        ],
+        [
+          390,
+          590
+        ],
+        [
+          1115,
+          590
+        ],
+        [
+          1115,
+          537
+        ]
+      ],
+      "duration": 7,
+      "label": "Store chunks",
+      "labelX": 750,
+      "labelY": 578,
+      "begin": -7.7
+    }
+  ],
+  "locale": "en",
+  "direction": "ltr",
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the diagram"
+  }
+}

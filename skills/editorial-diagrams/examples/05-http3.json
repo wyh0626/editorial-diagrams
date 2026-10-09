@@ -1,0 +1,464 @@
+{
+  "id": "http3-transport",
+  "kicker": "Figure 05 / HTTP/3 transport",
+  "title": "HTTP/3: multiple streams, one QUIC connection",
+  "intro": "After the handshake, HTTP/3 maps requests and responses to bidirectional QUIC streams. QUIC provides encryption, reliable delivery and congestion control over UDP/IP.",
+  "width": 1278,
+  "height": 690,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Request direction"
+    },
+    {
+      "kind": "response",
+      "label": "Response direction"
+    }
+  ],
+  "groups": [
+    {
+      "id": "client",
+      "title": "Client / browser or app",
+      "x": 32,
+      "y": 40,
+      "w": 390,
+      "h": 612
+    },
+    {
+      "id": "connection",
+      "title": "One QUIC connection / logical streams",
+      "x": 458,
+      "y": 40,
+      "w": 362,
+      "h": 612
+    },
+    {
+      "id": "server",
+      "title": "Server / HTTP/3 endpoint",
+      "x": 856,
+      "y": 40,
+      "w": 390,
+      "h": 612
+    }
+  ],
+  "nodes": [
+    {
+      "id": "client-http3",
+      "title": "HTTP/3",
+      "subtitle": "HEADERS / DATA / QPACK",
+      "icon": "client",
+      "x": 56,
+      "y": 104,
+      "w": 342,
+      "h": 76,
+      "group": "client"
+    },
+    {
+      "id": "client-quic",
+      "title": "QUIC / integrated TLS 1.3",
+      "features": [
+        {
+          "title": "Streams",
+          "description": "Order / flow"
+        },
+        {
+          "title": "TLS 1.3",
+          "description": "Handshake / keys"
+        },
+        {
+          "title": "Reliability",
+          "description": "ACK / recovery"
+        },
+        {
+          "title": "Connection",
+          "description": "Congestion / flow"
+        }
+      ],
+      "featureColumns": 2,
+      "x": 56,
+      "y": 244,
+      "w": 342,
+      "h": 220,
+      "group": "client"
+    },
+    {
+      "id": "client-udp",
+      "title": "UDP / IP",
+      "subtitle": "Send / receive datagrams",
+      "icon": "api",
+      "x": 56,
+      "y": 536,
+      "w": 342,
+      "h": 76,
+      "group": "client"
+    },
+    {
+      "id": "server-http3",
+      "title": "HTTP/3",
+      "subtitle": "HEADERS / DATA / QPACK",
+      "icon": "service",
+      "x": 880,
+      "y": 104,
+      "w": 342,
+      "h": 76,
+      "group": "server"
+    },
+    {
+      "id": "server-quic",
+      "title": "QUIC / integrated TLS 1.3",
+      "features": [
+        {
+          "title": "Streams",
+          "description": "Order / flow"
+        },
+        {
+          "title": "TLS 1.3",
+          "description": "Handshake / keys"
+        },
+        {
+          "title": "Reliability",
+          "description": "ACK / recovery"
+        },
+        {
+          "title": "Connection",
+          "description": "Congestion / flow"
+        }
+      ],
+      "featureColumns": 2,
+      "x": 880,
+      "y": 244,
+      "w": 342,
+      "h": 220,
+      "group": "server"
+    },
+    {
+      "id": "server-udp",
+      "title": "UDP / IP",
+      "subtitle": "Send / receive datagrams",
+      "icon": "api",
+      "x": 880,
+      "y": 536,
+      "w": 342,
+      "h": 76,
+      "group": "server"
+    },
+    {
+      "id": "streams",
+      "title": "Request and auxiliary streams",
+      "features": [
+        {
+          "title": "Stream 0",
+          "description": "/profile / bidi"
+        },
+        {
+          "title": "Stream 4",
+          "description": "/feed / bidi"
+        },
+        {
+          "title": "Stream 8",
+          "description": "/assets / bidi"
+        },
+        {
+          "title": "Auxiliary",
+          "description": "Control / QPACK"
+        }
+      ],
+      "featureColumns": 2,
+      "x": 484,
+      "y": 104,
+      "w": 310,
+      "h": 220,
+      "group": "connection"
+    },
+    {
+      "id": "recovery",
+      "title": "Loss recovery",
+      "subtitle": "Resend data / new packet ID",
+      "icon": "stream",
+      "x": 484,
+      "y": 376,
+      "w": 310,
+      "h": 88,
+      "group": "connection"
+    },
+    {
+      "id": "network",
+      "title": "UDP / IP network",
+      "subtitle": "Datagrams carry QUIC packets",
+      "icon": "stream",
+      "x": 484,
+      "y": 536,
+      "w": 310,
+      "h": 76,
+      "group": "connection"
+    }
+  ],
+  "edges": [
+    {
+      "id": "client-http3-down",
+      "from": "client-http3",
+      "to": "client-quic",
+      "kind": "request",
+      "points": [
+        [
+          172,
+          180
+        ],
+        [
+          172,
+          244
+        ]
+      ],
+      "duration": 8,
+      "begin": 0,
+      "label": "Encode",
+      "labelX": 172,
+      "labelY": 212
+    },
+    {
+      "id": "client-http3-up",
+      "from": "client-quic",
+      "to": "client-http3",
+      "kind": "response",
+      "points": [
+        [
+          282,
+          244
+        ],
+        [
+          282,
+          180
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3,
+      "label": "Deliver",
+      "labelX": 282,
+      "labelY": 212
+    },
+    {
+      "id": "client-quic-down",
+      "from": "client-quic",
+      "to": "client-udp",
+      "kind": "request",
+      "points": [
+        [
+          172,
+          464
+        ],
+        [
+          172,
+          536
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "client-quic-up",
+      "from": "client-udp",
+      "to": "client-quic",
+      "kind": "response",
+      "points": [
+        [
+          282,
+          536
+        ],
+        [
+          282,
+          464
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3
+    },
+    {
+      "id": "client-network-request",
+      "from": "client-udp",
+      "to": "network",
+      "kind": "request",
+      "points": [
+        [
+          398,
+          560
+        ],
+        [
+          484,
+          560
+        ]
+      ],
+      "duration": 8,
+      "begin": 0,
+      "label": "Request",
+      "labelX": 441,
+      "labelY": 552
+    },
+    {
+      "id": "network-server-request",
+      "from": "network",
+      "to": "server-udp",
+      "kind": "request",
+      "points": [
+        [
+          794,
+          560
+        ],
+        [
+          880,
+          560
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "server-network-response",
+      "from": "server-udp",
+      "to": "network",
+      "kind": "response",
+      "points": [
+        [
+          880,
+          588
+        ],
+        [
+          794,
+          588
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3
+    },
+    {
+      "id": "network-client-response",
+      "from": "network",
+      "to": "client-udp",
+      "kind": "response",
+      "points": [
+        [
+          484,
+          588
+        ],
+        [
+          398,
+          588
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3,
+      "label": "Response",
+      "labelX": 441,
+      "labelY": 596
+    },
+    {
+      "id": "server-quic-up",
+      "from": "server-udp",
+      "to": "server-quic",
+      "kind": "request",
+      "points": [
+        [
+          996,
+          536
+        ],
+        [
+          996,
+          464
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "server-quic-down",
+      "from": "server-quic",
+      "to": "server-udp",
+      "kind": "response",
+      "points": [
+        [
+          1108,
+          464
+        ],
+        [
+          1108,
+          536
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3
+    },
+    {
+      "id": "server-http3-up",
+      "from": "server-quic",
+      "to": "server-http3",
+      "kind": "request",
+      "points": [
+        [
+          996,
+          244
+        ],
+        [
+          996,
+          180
+        ]
+      ],
+      "duration": 8,
+      "begin": 0,
+      "label": "Deliver",
+      "labelX": 996,
+      "labelY": 212
+    },
+    {
+      "id": "server-http3-down",
+      "from": "server-http3",
+      "to": "server-quic",
+      "kind": "response",
+      "points": [
+        [
+          1108,
+          180
+        ],
+        [
+          1108,
+          244
+        ]
+      ],
+      "duration": 9,
+      "begin": -2.3,
+      "label": "Encode",
+      "labelX": 1108,
+      "labelY": 212
+    }
+  ],
+  "notes": [
+    "Each request and response share one bidirectional stream. Independent streams avoid TCP-style cross-stream head-of-line blocking, but still share congestion control, connection flow control and QPACK dependencies.",
+    "Direction cues only; this is not a packet-level timeline."
+  ],
+  "sources": [
+    {
+      "title": "HTTP/3 / RFC 9114",
+      "url": "https://www.rfc-editor.org/rfc/rfc9114.html#section-4.1"
+    },
+    {
+      "title": "QUIC / RFC 9000",
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.html"
+    },
+    {
+      "title": "TLS / RFC 9001",
+      "url": "https://www.rfc-editor.org/rfc/rfc9001.html"
+    },
+    {
+      "title": "QPACK / RFC 9204",
+      "url": "https://www.rfc-editor.org/rfc/rfc9204.html#section-2.1.2"
+    }
+  ],
+  "locale": "en",
+  "direction": "ltr",
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the diagram"
+  }
+}

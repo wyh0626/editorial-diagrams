@@ -1,0 +1,10 @@
+{
+  "client": "<path d='M4 5h16v12H4zM9 21h6M12 17v4'/>",
+  "api": "<path d='m8 6-5 6 5 6m8-12 5 6-5 6m-3-14-2 16'/>",
+  "database": "<ellipse cx='12' cy='5' rx='8' ry='3'/><path d='M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0'/>",
+  "cache": "<rect x='5' y='5' width='14' height='14' rx='2'/><path d='M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3M9 9h6v6H9z'/>",
+  "blob": "<path d='M3 6h7l2 2h9v12H3zM3 6V4h7l2 2'/>",
+  "stream": "<path d='M3 7h16m-4-4 4 4-4 4M21 17H5m4-4-4 4 4 4'/>",
+  "service": "<rect x='5' y='3' width='14' height='18' rx='1'/><path d='M8 7h8M8 11h8M8 15h4'/><circle cx='15' cy='17' r='1'/>",
+  "more": "<path d='M4 11h2v2H4zm7 0h2v2h-2zm7 0h2v2h-2z' fill='currentColor' stroke='none'/>"
+}

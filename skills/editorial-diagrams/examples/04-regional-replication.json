@@ -1,0 +1,486 @@
+{
+  "id": "regional-replication",
+  "kicker": "Figure 04 / Regional replication",
+  "title": "Primary writes and local read-only queries",
+  "intro": "Writes commit in the primary region. CDC asynchronously updates read-only replicas. Replication lag varies, so regional reads can be stale. Motion speed does not represent actual latency.",
+  "width": 1278,
+  "height": 650,
+  "legend": [
+    {
+      "kind": "request",
+      "label": "Request"
+    },
+    {
+      "kind": "response",
+      "label": "Response"
+    },
+    {
+      "kind": "change",
+      "label": "Async changes"
+    }
+  ],
+  "groups": [
+    {
+      "id": "primary-region",
+      "title": "Primary region / write commits",
+      "x": 32,
+      "y": 42,
+      "w": 388,
+      "h": 572
+    },
+    {
+      "id": "region-a",
+      "title": "Region A / local reads / eventual consistency",
+      "x": 510,
+      "y": 42,
+      "w": 736,
+      "h": 250
+    },
+    {
+      "id": "region-b",
+      "title": "Region B / local reads / eventual consistency",
+      "x": 510,
+      "y": 352,
+      "w": 736,
+      "h": 250
+    }
+  ],
+  "nodes": [
+    {
+      "id": "writer",
+      "x": 66,
+      "y": 105,
+      "w": 200,
+      "h": 64,
+      "title": "Write client",
+      "subtitle": "Submit write",
+      "icon": "client",
+      "group": "primary-region"
+    },
+    {
+      "id": "write-api",
+      "x": 66,
+      "y": 221,
+      "w": 200,
+      "h": 64,
+      "title": "Write API",
+      "subtitle": "Primary entry",
+      "icon": "api",
+      "group": "primary-region"
+    },
+    {
+      "id": "primary-db",
+      "x": 66,
+      "y": 337,
+      "w": 220,
+      "h": 82,
+      "title": "Primary DB",
+      "subtitle": "Commit transaction",
+      "icon": "database",
+      "group": "primary-region"
+    },
+    {
+      "id": "cdc",
+      "x": 66,
+      "y": 485,
+      "w": 220,
+      "h": 64,
+      "title": "CDC stream",
+      "subtitle": "Per-partition order",
+      "icon": "stream",
+      "group": "primary-region"
+    },
+    {
+      "id": "replica-a",
+      "x": 550,
+      "y": 145,
+      "w": 180,
+      "h": 72,
+      "title": "Read replica A",
+      "subtitle": "May lag primary",
+      "icon": "database",
+      "group": "region-a"
+    },
+    {
+      "id": "read-api-a",
+      "x": 810,
+      "y": 145,
+      "w": 170,
+      "h": 72,
+      "title": "Read API",
+      "subtitle": "Local replica",
+      "icon": "api",
+      "group": "region-a"
+    },
+    {
+      "id": "reader-a",
+      "x": 1046,
+      "y": 145,
+      "w": 168,
+      "h": 72,
+      "title": "Region A client",
+      "subtitle": "May read stale",
+      "icon": "client",
+      "group": "region-a"
+    },
+    {
+      "id": "replica-b",
+      "x": 550,
+      "y": 455,
+      "w": 180,
+      "h": 72,
+      "title": "Read replica B",
+      "subtitle": "May lag primary",
+      "icon": "database",
+      "group": "region-b"
+    },
+    {
+      "id": "read-api-b",
+      "x": 810,
+      "y": 455,
+      "w": 170,
+      "h": 72,
+      "title": "Read API",
+      "subtitle": "Local replica",
+      "icon": "api",
+      "group": "region-b"
+    },
+    {
+      "id": "reader-b",
+      "x": 1046,
+      "y": 455,
+      "w": 168,
+      "h": 72,
+      "title": "Region B client",
+      "subtitle": "May read stale",
+      "icon": "client",
+      "group": "region-b"
+    }
+  ],
+  "edges": [
+    {
+      "id": "submit-write",
+      "from": "writer",
+      "to": "write-api",
+      "kind": "request",
+      "label": "Write",
+      "labelX": 178,
+      "labelY": 195,
+      "points": [
+        [
+          166,
+          169
+        ],
+        [
+          166,
+          221
+        ]
+      ],
+      "duration": 8,
+      "begin": 0
+    },
+    {
+      "id": "ack-write",
+      "from": "write-api",
+      "to": "writer",
+      "kind": "response",
+      "points": [
+        [
+          166,
+          221
+        ],
+        [
+          166,
+          169
+        ]
+      ],
+      "duration": 9,
+      "begin": -1.7
+    },
+    {
+      "id": "commit-write",
+      "from": "write-api",
+      "to": "primary-db",
+      "kind": "request",
+      "points": [
+        [
+          166,
+          285
+        ],
+        [
+          166,
+          317
+        ],
+        [
+          176,
+          317
+        ],
+        [
+          176,
+          337
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.7
+    },
+    {
+      "id": "commit-response",
+      "from": "primary-db",
+      "to": "write-api",
+      "kind": "response",
+      "points": [
+        [
+          176,
+          337
+        ],
+        [
+          176,
+          317
+        ],
+        [
+          166,
+          317
+        ],
+        [
+          166,
+          285
+        ]
+      ],
+      "duration": 9,
+      "begin": -3.4
+    },
+    {
+      "id": "capture-committed",
+      "from": "primary-db",
+      "to": "cdc",
+      "kind": "change",
+      "label": "Committed changes",
+      "labelX": 188,
+      "labelY": 452,
+      "points": [
+        [
+          176,
+          419
+        ],
+        [
+          176,
+          485
+        ]
+      ],
+      "duration": 4,
+      "begin": 0
+    },
+    {
+      "id": "replicate-a",
+      "from": "cdc",
+      "to": "replica-a",
+      "kind": "change",
+      "label": "Async / variable lag",
+      "labelX": 472,
+      "labelY": 330,
+      "points": [
+        [
+          286,
+          517
+        ],
+        [
+          460,
+          517
+        ],
+        [
+          460,
+          181
+        ],
+        [
+          550,
+          181
+        ]
+      ],
+      "duration": 7,
+      "begin": -0.55
+    },
+    {
+      "id": "replicate-b",
+      "from": "cdc",
+      "to": "replica-b",
+      "kind": "change",
+      "label": "Async copy",
+      "labelX": 376,
+      "labelY": 529,
+      "points": [
+        [
+          286,
+          517
+        ],
+        [
+          480,
+          517
+        ],
+        [
+          480,
+          491
+        ],
+        [
+          550,
+          491
+        ]
+      ],
+      "duration": 7,
+      "begin": -1.95
+    },
+    {
+      "id": "a-client-query",
+      "from": "reader-a",
+      "to": "read-api-a",
+      "kind": "request",
+      "points": [
+        [
+          1046,
+          181
+        ],
+        [
+          980,
+          181
+        ]
+      ],
+      "duration": 8,
+      "begin": -1.25
+    },
+    {
+      "id": "a-client-result",
+      "from": "read-api-a",
+      "to": "reader-a",
+      "kind": "response",
+      "points": [
+        [
+          980,
+          181
+        ],
+        [
+          1046,
+          181
+        ]
+      ],
+      "duration": 9,
+      "begin": -1.55
+    },
+    {
+      "id": "a-replica-query",
+      "from": "read-api-a",
+      "to": "replica-a",
+      "kind": "request",
+      "points": [
+        [
+          810,
+          181
+        ],
+        [
+          730,
+          181
+        ]
+      ],
+      "duration": 8,
+      "begin": -2.5
+    },
+    {
+      "id": "a-replica-result",
+      "from": "replica-a",
+      "to": "read-api-a",
+      "kind": "response",
+      "points": [
+        [
+          730,
+          181
+        ],
+        [
+          810,
+          181
+        ]
+      ],
+      "duration": 9,
+      "begin": -3.1
+    },
+    {
+      "id": "b-client-query",
+      "from": "reader-b",
+      "to": "read-api-b",
+      "kind": "request",
+      "points": [
+        [
+          1046,
+          491
+        ],
+        [
+          980,
+          491
+        ]
+      ],
+      "duration": 8,
+      "begin": -3.75
+    },
+    {
+      "id": "b-client-result",
+      "from": "read-api-b",
+      "to": "reader-b",
+      "kind": "response",
+      "points": [
+        [
+          980,
+          491
+        ],
+        [
+          1046,
+          491
+        ]
+      ],
+      "duration": 9,
+      "begin": -4.65
+    },
+    {
+      "id": "b-replica-query",
+      "from": "read-api-b",
+      "to": "replica-b",
+      "kind": "request",
+      "points": [
+        [
+          810,
+          491
+        ],
+        [
+          730,
+          491
+        ]
+      ],
+      "duration": 8,
+      "begin": -5.4
+    },
+    {
+      "id": "b-replica-result",
+      "from": "replica-b",
+      "to": "read-api-b",
+      "kind": "response",
+      "points": [
+        [
+          730,
+          491
+        ],
+        [
+          810,
+          491
+        ]
+      ],
+      "duration": 9,
+      "begin": -6.2
+    }
+  ],
+  "locale": "en",
+  "direction": "ltr",
+  "ui": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "legend": "Legend",
+    "scrollHint": "Scroll horizontally to explore the diagram"
+  }
+}

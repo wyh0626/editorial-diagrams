@@ -1,0 +1,4 @@
+interface:
+  display_name: "Editorial Diagrams"
+  short_description: "Plan, render and review precise interactive technical diagrams"
+  default_prompt: "Use $editorial-diagrams to create a clear technical diagram. Match the user's language, including controls and accessibility labels, and deliver the editable configuration, interactive HTML and a preview when available."
